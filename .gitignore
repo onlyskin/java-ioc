@@ -1,0 +1,20 @@
+.gitignore.swp
+.gradle
+/build/
+!gradle-wrapper.jar
+.gradletasknamecache
+*.class
+*.jar
+*.war
+*.ear
+gradle-app.setting
+/out/
+.idea_modules/
+*.DS_Store
+.idea/
+
+### Vim ###
+# swap
+[._]*.s[a-w][a-z]
+[._]s[a-w][a-z]
+
