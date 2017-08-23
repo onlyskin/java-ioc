@@ -31,7 +31,6 @@ public class ContainerTest {
 
     @Test
     public void ConstructsClassWithInstanceDependencies() throws Exception {
-        container.registerType(D.class);
         C c = new C();
         container.registerInstance(c);
         E e = new E();
@@ -47,5 +46,18 @@ public class ContainerTest {
         container.registerType(B.class);
         F f = container.construct(F.class);
         assertEquals(f.a.getClass(), A.class);
+        assertEquals(f.b.getClass(), B.class);
+    }
+
+    @Test
+    public void ConstructsClassWithRecursiveDependencies() throws Exception {
+        C c = new C();
+        container.registerInstance(c);
+        container.registerType(E.class);
+        container.registerType(D.class);
+        G g = container.construct(G.class);
+        assertEquals(g.d.getClass(), D.class);
+        assertEquals(g.d.c, c);
+        assertEquals(g.d.e.getClass(), E.class);
     }
 }

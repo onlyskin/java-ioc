@@ -27,7 +27,8 @@ public class Container {
     }
 
     private Object[] makeParameters(Class[] parameterTypes) throws
-        InstantiationException, IllegalAccessException {
+        InstantiationException, IllegalAccessException,
+        InvocationTargetException {
             Object[] output = new Object[parameterTypes.length];
             for (int i=0;i<parameterTypes.length;i++) {
                 output[i] = makeParameter(parameterTypes[i]);
@@ -36,12 +37,13 @@ public class Container {
     }
 
     private <T> T makeParameter(Class<T> parameterType) throws
-        InstantiationException, IllegalAccessException {
+        InstantiationException, IllegalAccessException,
+        InvocationTargetException {
             if (instances.containsKey(parameterType)) {
                 return parameterType.cast(instances.get(parameterType));
             } else if (classes.contains(parameterType)) {
-                Class c = classes.get(classes.indexOf(parameterType));
-                return parameterType.cast(c.newInstance());
+                Class<T> c = (Class<T>)classes.get(classes.indexOf(parameterType));
+                return construct(c);
             } else {
                 return null;
             }
