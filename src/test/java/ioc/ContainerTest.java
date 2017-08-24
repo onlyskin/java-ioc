@@ -60,4 +60,16 @@ public class ContainerTest {
         assertEquals(g.d.c, c);
         assertEquals(g.d.e.getClass(), E.class);
     }
+    
+    @Test
+    public void ConstructsClassWithExtraStringParam() throws Exception {
+        A a = new A();
+        container.registerInstance(a);
+        container.registerType(B.class);
+        H h = container.construct(H.class, "varargParam1", "varargParam2");
+        assertEquals("varargParam1", h.param1);
+        assertEquals("varargParam2", h.param2);
+        assertEquals(a, h.a);
+        assertEquals(B.class, h.b.getClass());
+    }
 }

@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.NoSuchElementException;
 
 public class Container {
     List<Class> classes;
@@ -16,27 +19,28 @@ public class Container {
         this.instances = new HashMap<Class, Object>();
     }
 
-    public <T> T construct(Class<T> clazz)
+    public <T> T construct(Class<T> clazz, Object... remainingParams)
         throws InstantiationException, IllegalAccessException,
                           InvocationTargetException {
+            LinkedList<Object> varargs = new LinkedList<Object>(Arrays.asList(remainingParams));
             Constructor[] constructors = clazz.getConstructors();
             Constructor<T> constructor = (Constructor<T>)constructors[0];
             Class[] parameterTypes = constructor.getParameterTypes();
-            Object[] parameters = makeParameters(parameterTypes);
+            Object[] parameters = makeParameters(parameterTypes, varargs);
             return constructor.newInstance(parameters);
     }
 
-    private Object[] makeParameters(Class[] parameterTypes) throws
+    private Object[] makeParameters(Class[] parameterTypes, LinkedList varargs) throws
         InstantiationException, IllegalAccessException,
         InvocationTargetException {
             Object[] output = new Object[parameterTypes.length];
             for (int i=0;i<parameterTypes.length;i++) {
-                output[i] = makeParameter(parameterTypes[i]);
+                output[i] = makeParameter(parameterTypes[i], varargs);
             }
             return output;
     }
 
-    private <T> T makeParameter(Class<T> parameterType) throws
+    private <T> T makeParameter(Class<T> parameterType, LinkedList varargs) throws
         InstantiationException, IllegalAccessException,
         InvocationTargetException {
             if (instances.containsKey(parameterType)) {
@@ -44,7 +48,10 @@ public class Container {
             } else if (classes.contains(parameterType)) {
                 Class<T> c = (Class<T>)classes.get(classes.indexOf(parameterType));
                 return construct(c);
-            } else {
+            }
+            try {
+                return (T)varargs.pop();
+            } catch (NoSuchElementException e) {
                 return null;
             }
     }
