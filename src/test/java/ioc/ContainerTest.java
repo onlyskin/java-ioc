@@ -72,4 +72,11 @@ public class ContainerTest {
         assertEquals(a, h.a);
         assertEquals(B.class, h.b.getClass());
     }
+    
+    @Test
+    public void ConstructsInnerClassWithExtrastringParam() throws Exception {
+        container.registerType(J.class);
+        I i = container.construct(I.class, "varargParam");
+        assertEquals("varargParam", i.j.param);
+    }
 }
