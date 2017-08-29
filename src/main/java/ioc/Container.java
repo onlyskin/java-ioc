@@ -19,39 +19,39 @@ public class Container {
     }
 
     public <T> T construct(Class<T> clazz, Object... remainingParams)
-        throws InstantiationException, IllegalAccessException,
-                          InvocationTargetException {
-            Constructor[] constructors = clazz.getConstructors();
-            Constructor<T> constructor = (Constructor<T>)constructors[0];
-            Class[] parameterTypes = constructor.getParameterTypes();
-            Object[] parameters = makeParameters(parameterTypes, remainingParams);
-            return constructor.newInstance(parameters);
+            throws InstantiationException, IllegalAccessException,
+            InvocationTargetException {
+        Constructor[] constructors = clazz.getConstructors();
+        Constructor<T> constructor = (Constructor<T>)constructors[0];
+        Class[] parameterTypes = constructor.getParameterTypes();
+        Object[] parameters = makeParameters(parameterTypes, remainingParams);
+        return constructor.newInstance(parameters);
     }
 
-    private Object[] makeParameters(Class[] parameterTypes, Object[] remainingParams) throws
-        InstantiationException, IllegalAccessException,
-        InvocationTargetException {
-            Object[] output = new Object[parameterTypes.length];
-            for (int i=0;i<parameterTypes.length;i++) {
-                output[i] = makeParameter(parameterTypes[i], remainingParams);
-            }
-            return output;
+    private Object[] makeParameters(Class[] parameterTypes,
+            Object[] remainingParams) throws InstantiationException,
+            IllegalAccessException,InvocationTargetException {
+        Object[] output = new Object[parameterTypes.length];
+        for (int i=0;i<parameterTypes.length;i++) {
+            output[i] = makeParameter(parameterTypes[i], remainingParams);
+        }
+        return output;
     }
 
-    private <T> T makeParameter(Class<T> parameterType, Object[] remainingParams) throws
-        InstantiationException, IllegalAccessException,
-        InvocationTargetException {
-            if (instances.containsKey(parameterType)) {
-                return parameterType.cast(instances.get(parameterType));
-            } else if (classes.contains(parameterType)) {
-                Class<T> c = (Class<T>)classes.get(classes.indexOf(parameterType));
-                return construct(c, remainingParams);
-            }
-            try {
-                return (T)remainingParams[counter++];
-            } catch (ArrayIndexOutOfBoundsException e) {
-                return null;
-            }
+    private <T> T makeParameter(Class<T> parameterType,
+            Object[] remainingParams) throws InstantiationException,
+            IllegalAccessException, InvocationTargetException {
+        if (instances.containsKey(parameterType)) {
+            return parameterType.cast(instances.get(parameterType));
+        } else if (classes.contains(parameterType)) {
+            Class<T> c = (Class<T>)classes.get(classes.indexOf(parameterType));
+            return construct(c, remainingParams);
+        }
+        try {
+            return (T)remainingParams[counter++];
+        } catch (ArrayIndexOutOfBoundsException e) {
+            return null;
+        }
     }
 
     public <T> void registerType(Class<T> clazz) {

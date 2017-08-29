@@ -76,7 +76,8 @@ public class ContainerTest {
     @Test
     public void ConstructsInnerClassWithExtrastringParam() throws Exception {
         container.registerType(J.class);
-        I i = container.construct(I.class, "varargParam");
-        assertEquals("varargParam", i.j.param);
+        I i = container.construct(I.class, "varargParam1", "varargParam2");
+        assertEquals("varargParam1", i.j.param);
+        assertEquals("varargParam2", i.param);
     }
 }
